@@ -6,7 +6,6 @@
     <title>OAuth Token and List Customers</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Full-screen centered container */
         body, html {
             height: 100%;
             margin: 0;
@@ -58,6 +57,14 @@
             margin-top: 10px;
         }
 
+        input[type="text"] {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -82,6 +89,8 @@
         <!-- Get Access Token Section -->
         <div class="section" id="accessTokenSection">
             <h1>Get Access Token</h1>
+            <input type="text" id="refreshTokenInput" placeholder="Refresh Token">
+            <button id="updateRefreshTokenButton">Update Refresh Token</button>
             <button id="getTokenButton">Get Access Token</button>
             <div class="response-box" id="tokenResponseArea">Waiting for token response...</div>
         </div>
@@ -91,35 +100,58 @@
             <h2>List Customers</h2>
             <button id="listCustomersButton">List Customers</button>
             <div id="customersTableArea">Waiting for customer list response...</div>
+            <div id="customerDetailsArea" class="response-box" style="display:none;"></div>
         </div>
     </div>
 
     <script>
         $(document).ready(function(){
+            // Fetch and display the current REFRESH_TOKEN
+            $.get("/get-refresh-token", function(data) {
+                if (data.refresh_token) {
+                    $("#refreshTokenInput").val(data.refresh_token);
+                }
+            });
+
+            // Update REFRESH_TOKEN
+            $("#updateRefreshTokenButton").click(function() {
+                const newRefreshToken = $("#refreshTokenInput").val();
+                $.ajax({
+                    url: "/update-refresh-token",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ refresh_token: newRefreshToken }),
+                    success: function(data) {
+                        $("#tokenResponseArea").text(data.message);
+                    },
+                    error: function(err) {
+                        $("#tokenResponseArea").text("Error updating REFRESH_TOKEN: " + err.responseJSON.error);
+                    }
+                });
+            });
+
             // Get Access Token
             $("#getTokenButton").click(function(){
                 $("#tokenResponseArea").text("Requesting access token...");
                 $.post("/get-token", function(data){
-                    $("#tokenResponseArea").text(JSON.stringify(data, null, 4));
+                    $("#tokenResponseArea").text(data.status + ": " + (data.access_token || data.error));
                 }).fail(function() {
                     $("#tokenResponseArea").text("Error: Failed to get access token.");
                 });
             });
 
-            // List Customers
+            // Fetch and display customers
             $("#listCustomersButton").click(function(){
                 $("#customersTableArea").text("Fetching customer list...");
-
-                // Make request to list all customers
                 $.post("/list-customers", function(data){
-                    // Generate table
-                    let table = "<table><thead><tr><th>Customer Name</th><th>Customer Organization</th><th>Account Number</th></tr></thead><tbody>";
+                    let table = "<table><thead><tr><th>Customer Name</th><th>Customer Organization</th><th>Account Number</th><th>Actions</th></tr></thead><tbody>";
                     
                     data.forEach(customer => {
                         table += `<tr>
                             <td>${customer.customerName}</td>
                             <td>${customer.customerOrganization}</td>
                             <td>${customer.accountNumber}</td>
+                            <td><button onclick="getCustomerDetails('${customer.accountNumber}')">View Details</button></td>
                         </tr>`;
                     });
 
@@ -129,6 +161,15 @@
                     $("#customersTableArea").text("Error: Failed to fetch customer list.");
                 });
             });
+
+            // Fetch and display details for a specific customer
+            window.getCustomerDetails = function(customerId) {
+                $.get(`/get-customer-details/${customerId}`, function(data) {
+                    $("#customerDetailsArea").show().html("<pre>" + JSON.stringify(data, null, 4) + "</pre>");
+                }).fail(function() {
+                    $("#customerDetailsArea").text("Error: Failed to fetch customer details.").show();
+                });
+            };
         });
     </script>
 </body>

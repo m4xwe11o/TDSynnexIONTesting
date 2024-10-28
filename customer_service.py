@@ -81,3 +81,41 @@ def list_customers(pageSize=10):
     except Exception as e:
         logger.error("Exception occurred while retrieving customers: %s", e)
         return {"error": str(e)}
+
+def get_customer_details(customer_id):
+    """
+    Retrieve details for a specific customer using account_id and customer_id.
+    """
+    access_token = os.getenv("ACCESS_TOKEN")
+    if not access_token:
+        logger.error("No ACCESS_TOKEN found in .env. Please obtain a token first.")
+        return {"error": "No access token found."}
+
+    headers = {
+        'Authorization': f"Bearer {access_token}",
+        'accept': "application/json"
+    }
+
+    endpoint = f"/api/v3/accounts/{account_id}/customers/{customer_id}"
+
+    try:
+        # Make the GET request
+        logger.debug("Requesting details for customer ID: %s", customer_id)
+        conn = http.client.HTTPSConnection(auth_url, context=ssl_context)
+        conn.request("GET", endpoint, headers=headers)
+        
+        # Get and process the response
+        response = conn.getresponse()
+        data = response.read().decode("utf-8")
+        
+        if response.status == 200:
+            logger.info("Successfully retrieved customer details.")
+            customer_details = json.loads(data)
+            return customer_details
+        else:
+            logger.error("Error retrieving customer details: %s - %s", response.status, data)
+            return {"error": f"{response.status} - {data}"}
+
+    except Exception as e:
+        logger.error("Exception occurred while retrieving customer details: %s", e)
+        return {"error": str(e)}

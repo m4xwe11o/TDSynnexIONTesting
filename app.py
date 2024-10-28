@@ -3,9 +3,10 @@ import urllib.parse
 import os
 import json
 import ssl
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from dotenv import load_dotenv
 from customer_service import list_customers
+from customer_service import get_customer_details
 import logging
 
 # Load environment variables from .env file
@@ -114,6 +115,26 @@ def validate_access_token():
         logger.error(f"Error during token validation: {e}")
         return False
 
+@app.route("/get-refresh-token", methods=["GET"])
+def get_refresh_token():
+    """
+    Return the current REFRESH_TOKEN value if it exists.
+    """
+    refresh_token = os.getenv("REFRESH_TOKEN", "")
+    return jsonify({"refresh_token": refresh_token})
+
+@app.route("/update-refresh-token", methods=["POST"])
+def update_refresh_token():
+    """
+    Update the REFRESH_TOKEN value.
+    """
+    new_refresh_token = request.json.get("refresh_token", "")
+    if new_refresh_token:
+        save_to_env("REFRESH_TOKEN", new_refresh_token)
+        return jsonify({"message": "REFRESH_TOKEN updated successfully", "refresh_token": new_refresh_token})
+    else:
+        return jsonify({"error": "No REFRESH_TOKEN provided"}), 400
+
 @app.route("/get-token", methods=["POST"])
 def get_token():
     """
@@ -153,20 +174,24 @@ def list_customers_route():
     Endpoint to list customers with the mandatory filters: accountId and pageSize,
     and returns customerName, customerOrganization, and accountNumber for each customer.
     """
-    # Get pageSize from request, defaulting to 10 if not provided
     page_size = 100
 
     try:
-        # Convert pageSize to an integer if it's provided
         page_size = int(page_size)
     except ValueError:
-        logger.warning("Invalid pageSize provided; defaulting to 10.")
-        page_size = page_size
+        logger.warning("Invalid pageSize provided; defaulting to 100.")
+        page_size = 100
 
-    # Call the list_customers function with only pageSize
     result = list_customers(pageSize=page_size)
     return jsonify(result)
 
+@app.route("/get-customer-details/<customer_id>", methods=["GET"])
+def get_customer_details_route(customer_id):
+    """
+    Endpoint to retrieve details of a specific customer.
+    """
+    result = get_customer_details(customer_id)
+    return jsonify(result)
 
 @app.route("/")
 def index():
