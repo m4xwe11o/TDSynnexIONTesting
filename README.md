@@ -20,7 +20,7 @@ Follow these instructions to set up the project on your local machine.
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/your-username/TDSynnexIONTesting.git
+   git clone https://github.com/m4xwe11o/TDSynnexIONTesting.git
    cd TDSynnexIONTesting
 
 ### Summary of Commands
