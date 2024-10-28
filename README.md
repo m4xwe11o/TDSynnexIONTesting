@@ -35,8 +35,9 @@ The ION APIv3 documentation can be found here: https://www.tdsynnex.com/ion/v3ap
    
    ```
    # Add the following to .env (edit with your refresh token)
-   ACCESS_TOKEN=
-   REFRESH_TOKEN=your-refresh-token
+   # .env
+   GRANT_TYPE=refresh_token
+   REFRESH_TOKEN=  # Replace with your actual refresh token
    ```
 6. **Run the app**: `python app.py`
 
