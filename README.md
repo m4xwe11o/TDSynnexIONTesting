@@ -20,7 +20,7 @@ Follow these instructions to set up the project on your local machine.
    git clone https://github.com/your-username/TDSynnexIONTesting.git
    cd TDSynnexIONTesting
 
-### Summary of Commands in the `README.md`
+### Summary of Commands
 
 1. **Clone the repository**: `git clone ...`
 2. **Set up virtual environment**: `python3 -m venv venv`
