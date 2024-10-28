@@ -22,11 +22,16 @@ Follow these instructions to set up the project on your local machine.
 
 ### Summary of Commands in the `README.md`
 
-- **Clone the repository**: `git clone ...`
-- **Set up virtual environment**: `python3 -m venv venv`
-- **Activate environment**: `source venv/bin/activate` (macOS/Linux) or `venv\Scripts\activate` (Windows)
-- **Install dependencies**: `pip install -r requirements.txt`
-- **Run the app**: `python app.py`
-- **Push changes to GitHub**: `git add .`, `git commit -m "message"`, `git push`
+1. **Clone the repository**: `git clone ...`
+2. **Set up virtual environment**: `python3 -m venv venv`
+3. **Activate environment**: `source venv/bin/activate` (macOS/Linux) or `venv\Scripts\activate` (Windows)
+4. **Install dependencies**: `pip install -r requirements.txt`
+5. **Create a `.env`file**: `touch .env`
+   
+   ```
+   # Add the following to .env (edit with your refresh token)
+   ACCESS_TOKEN=
+   REFRESH_TOKEN=your-refresh-token
+   ```
+6. **Run the app**: `python app.py`
 
-This `README.md` should guide users through setup, usage, and contributing to the project on GitHub. Let me know if you’d like further customization!
