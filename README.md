@@ -9,6 +9,8 @@ This project is designed to interface with the TDSynnex ION API, providing funct
 
 Follow these instructions to set up the project on your local machine.
 
+The ION APIv3 documentation can be found here: https://www.tdsynnex.com/ion/v3api/ 
+
 ### Prerequisites
 
 1. **Python 3** - Download and install from [python.org](https://www.python.org/).
