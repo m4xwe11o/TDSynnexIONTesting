@@ -2,6 +2,9 @@
 
 This project is designed to interface with the TDSynnex ION API, providing functionality to obtain an access token, list customers, and display results in a user-friendly format. The project setup includes a virtual environment to manage dependencies.
 
+![image](https://github.com/user-attachments/assets/8a17bda0-6602-41ac-8345-8a25f288dbdc)
+
+
 ## Getting Started
 
 Follow these instructions to set up the project on your local machine.
@@ -34,4 +37,5 @@ Follow these instructions to set up the project on your local machine.
    REFRESH_TOKEN=your-refresh-token
    ```
 6. **Run the app**: `python app.py`
+
 
